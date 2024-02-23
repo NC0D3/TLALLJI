@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>Lokalization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+    
+    <script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
+        
+    <!-- open -->   
+    <script>
+        var E=[];
+        var R=[];
+        var data;
+        var zEtemp;
+        var zRtemp;
+        var Egraph = {};
+        Egraph.mode = 'markers+text';
+        Egraph.textposition = 'top center';
+        Egraph.textfont = {
+            family: 'Raleway, sans-serif'
+        };
+        Egraph.marker= { size: 12 };
+        
+        var Rgraph = {};
+        Rgraph.mode = 'markers+text';
+        Rgraph.textposition = 'top center';
+        Rgraph.textfont = {
+            family: 'Raleway, sans-serif'
+        };
+        Rgraph.marker= { size: 12 };
+        
+        var config ={
+            responsive: true,
+            scrollZoom: true,
+            displayModeBar: false
+        }
+        
+        var layout = {
+            margin: { t: 0 },
+        }
+        
+        var dtaresponse = "";
+        var switchtglr = document.getElementsByClassName("icon");
+        var zcoord = document.getElementsByClassName("zcoord");
+        var zsensor = document.getElementsByClassName("zsensor");
+        var xf = document.getElementsByClassName("xf");
+        var yf = document.getElementsByClassName("yf");
+        var zf = document.getElementsByClassName("zf");
+        
+        var req = new XMLHttpRequest();
+        req.open('POST', '/', true);
+        req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+        req.send("type=open");
+        req.onreadystatechange = function()
+        {
+            if(this.readyState == 4 && this.status == 200) {
+                dtaresponse = this.responseText;
+                data = dtaresponse.split("@");
+                E = matrixiador(data[1]);
+                Egraph.x = transpose(E)[0];
+                Egraph.y = transpose(E)[1];
+                Egraph.z = transpose(E)[2];
+                R = matrixiador(data[2]);
+                Rgraph.x = [R[0][0]];
+                xf[0].innerHTML = "x estimada: " + Rgraph.x + "m";
+                Rgraph.y = [R[0][1]];
+                yf[0].innerHTML = "y estimada: " + Rgraph.y + "m";
+                Rgraph.z = [R[0][2]];
+                zf[0].innerHTML = "z estimada: " + Rgraph.z + "m";
+                Rgraph.text = ['R'];
+                
+                if(data[0]=="3d"){
+                    Egraph.type = 'scatter3d';
+                    Egraph.text = ['E-0', 'E-1', 'E-2' , 'E-3'];
+                    Rgraph.type = 'scatter3d';
+                    switchtglr[0].classList.add("fa-cubes");
+                    for (j = 0; j < zcoord.length; j++){
+                        zcoord[j].style.display = "flex";
+                    }
+                    zsensor[0].style.display = "block";
+                }else{
+                    Egraph.text = ['E-0', 'E-1', 'E-2'];
+                    switchtglr[0].classList.add("fa-area-chart");
+                    for (j = 0; j < zcoord.length; j++){
+                        zcoord[j].style.display = "none";
+                    }
+                    zsensor[0].style.display = "none";
+                }
+                for(var i = 0;i<4;i++){
+                    document.getElementById("coordx"+(i+1)).value= Egraph.x[i];
+                    document.getElementById("coordy"+(i+1)).value= Egraph.y[i];
+                    document.getElementById("coordz"+(i+1)).value= Egraph.z[i];
+                }
+                
+                Plotly.newPlot('graph',[Egraph,Rgraph],layout,config);
+                Plotly.react('graph', [Egraph,Rgraph]);
+            }
+        }
+    </script>
+    
+</head>
+ 
+<body>
+ 
+    <div class="sidenav">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='media/Logo.svg') }}" alt="Logo">
+            <h1>LOKALIZATION</h1>
+        </div>
+        <hr>
+        <button class="dropdown-btn">
+            <i class="	fa fa-code-fork"></i>Metodos<i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a class="active" href="#">Pesos</a>
+            <a href="#">Vectorial</a>
+            <a href="#">Propagacion</a>
+            <a href="#">Trilateracion</a>
+        </div>
+        <hr>
+        <button class="dropdown-btn">
+            <i class="fa fa-gears"></i>Ajustes<i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <div class="sensor">
+                <div class="spacer"></div>
+                <div class="sidebar-header">Sensor 1</div>
+                <form>
+                    <div>
+                        <label for="coordx1">
+                            <Span>X:</Span>
+                        </label>
+                        <input type="number" id="coordx1" name="coordx1">
+                    </div>
+                    <div>
+                        <label for="coordy1">
+                            <Span>Y:</Span>
+                        </label>
+                        <input type="number" id="coordy1" name="coordy1">
+                    </div>
+                    <div class="zcoord">
+                        <label for="coordz1">
+                            <Span>Z:</Span>
+                        </label>
+                        <input type="number" id="coordz1" name="coordz1">
+                    </div>
+                </form>
+                <div class="spacer"></div>
+            </div>
+            <div class="sensor">
+                <div class="spacer"></div>
+                <div class="sidebar-header">Sensor 2</div>
+                <form>
+                    <div>
+                        <label for="coordx2">
+                            <Span>X:</Span>
+                        </label>
+                        <input type="number" id="coordx2" name="coordx2">
+                    </div>
+                    <div>
+                        <label for="coordy2">
+                            <Span>Y:</Span>
+                        </label>
+                        <input type="number" id="coordy2" name="coordy2" value="3">
+                    </div>
+                    <div class="zcoord">
+                        <label for="coordz2">
+                            <Span>Z:</Span>
+                        </label>
+                        <input type="number" id="coordz2" name="coordz2">
+                    </div>
+                </form>
+                <div class="spacer"></div>
+            </div>
+            <div class="sensor">
+                <div class="spacer"></div>
+                <div class="sidebar-header">Sensor 3</div>
+                <form>
+                    <div>
+                        <label for="coordx3">
+                            <Span>X:</Span>
+                        </label>
+                        <input type="number" id="coordx3" name="coordx3">
+                    </div>
+                    <div>
+                        <label for="coordy3">
+                            <Span>Y:</Span>
+                        </label>
+                        <input type="number" id="coordy3" name="coordy3">
+                    </div>
+                    <div class="zcoord">
+                        <label for="coordz3">
+                            <Span>Z:</Span>
+                        </label>
+                        <input type="number" id="coordz3" name="coordz3">
+                    </div>
+                </form>
+                <div class="spacer"></div>
+            </div>
+            <div class="sensor zsensor">
+                <div class="spacer"></div>
+                <div class="sidebar-header">Sensor 4</div>
+                <form>
+                    <div>
+                        <label for="coordx4">
+                            <Span>X:</Span>
+                        </label>
+                        <input type="number" id="coordx4" name="coordx4">
+                    </div>
+                    <div>
+                        <label for="coordy4">
+                            <Span>Y:</Span>
+                        </label>
+                        <input type="number" id="coordy4" name="coordy4">
+                    </div>
+                    <div>
+                        <label for="coordz4">
+                            <Span>Z:</Span>
+                        </label>
+                        <input type="number" id="coordz4" name="coordz4">
+                    </div>
+                </form>
+                <div class="spacer"></div>
+            </div>
+            <div class="spacer"></div>
+            <button class="btn">
+                <div class="spacer"></div>
+                <i class="fa fa-refresh"></i>Actualizar
+                <div class="spacer"></div>
+            </button>
+            <div class="spacer"></div>
+        </div>
+        <hr>
+        <div class="switch" id="switch">
+            <input type="checkbox" name="toggle">
+            <label for="toggle">
+                <div class="toggler">
+                    <i class="fa icon"></i>
+                </div>
+            </label>
+        </div>
+ 
+        <hr>
+    </div>
+ 
+    <div class="main">
+        <h2>Mapa Cartesiano</h2>
+        <div class="graphic" id="graph"></div>
+        <div class="coord">
+            <p class="xf"></p>
+            <p class="yf"></p>
+            <p class="zcoord zf"></p>
+        </div>
+ 
+    </div>
+ 
+    <!-- dropdown -->
+    <script>
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+        for (i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("click", function () {
+                this.classList.toggle("active-nav");
+                var dropdownContent = this.nextElementSibling;
+                if (dropdownContent.style.display === "block") {
+                    dropdownContent.style.display = "none";
+                } else {
+                    dropdownContent.style.display = "block";
+                }
+            });
+        }
+    </script>
+ 
+    <!-- change -->
+    <script>
+        var switchbtn = document.getElementById("switch");
+        switchbtn.addEventListener("click", function () {
+            var switchtglr = this.getElementsByClassName("icon");
+            var zcoord = document.getElementsByClassName("zcoord");
+            var zsensor = document.getElementsByClassName("zsensor");
+            var j;
+            if (switchtglr[0].classList.contains("fa-area-chart")) {
+                switchtglr[0].classList.replace("fa-area-chart", "fa-cubes");
+                Egraph.type = 'scatter3d';
+                Egraph.z= transpose(E)[2];
+                Rgraph.type = 'scatter3d';
+                Rgraph.z=[R[0][2]];
+                Plotly.react('graph', [Egraph,Rgraph]);
+                for (j = 0; j < zcoord.length; j++){
+                    zcoord[j].style.display = "flex";
+                }
+                zsensor[0].style.display = "block";
+                var req = new XMLHttpRequest();
+                req.open('POST', '/', true);
+                req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+                req.send("type=change&var=3d");
+            } else {
+                switchtglr[0].classList.replace("fa-cubes", "fa-area-chart");
+                delete Egraph.type;
+                delete Egraph.z;
+                delete Rgraph.type;
+                delete Rgraph.z;
+                Plotly.react('graph', [Egraph,Rgraph]);
+                for (j = 0; j < zcoord.length; j++){
+                    zcoord[j].style.display = "none";
+                }
+                zsensor[0].style.display = "none";
+                var req = new XMLHttpRequest();
+                req.open('POST', '/', true);
+                req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+                req.send("type=change&var=2d");
+            }
+        }, false);
+    </script>
+    
+    <!-- settings -->
+    <script>
+        var btn_refresh = document.getElementsByClassName("btn");
+        btn_refresh[0].addEventListener("click",function(){
+                let sender="[";
+                for (var i=0; i<4;i++){
+                    sender = sender+"["+document.getElementById("coordx"+(i+1)).value+","+document.getElementById("coordy"+(i+1)).value+","+document.getElementById("coordz"+(i+1)).value+"],";
+                }
+                sender = sender + "]";
+                var req = new XMLHttpRequest();
+                req.open('POST', '/', true);
+                req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+                req.send("type=settings&E="+sender);
+                req.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200) {
+                        dtaresponse = this.responseText;
+                        data = dtaresponse.split("@");
+                        E = matrixiador(data[1]);
+                        Egraph.x = transpose(E)[0];
+                        Egraph.y = transpose(E)[1];
+                        Egraph.z = transpose(E)[2];
+                        Plotly.react('graph', [Egraph,Rgraph]);
+                    }
+                }
+        });
+    </script>
+    
+    <!-- refresh -->
+    <script type="text/javascript">
+        function refresco(){
+            var req = new XMLHttpRequest();
+            var peticion = document.getElementById('hora');
+            req.open('POST', '/', true);
+            req.setRequestHeader('content-type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            req.send("type=refresh");
+            req.onreadystatechange = function()
+            {
+                if(this.readyState == 4 && this.status == 200) {
+                        dtaresponse = this.responseText;
+                        data = dtaresponse.split("@");
+                        R = matrixiador(data[2]);
+                        Rgraph.x = [R[0][0]];
+                        xf[0].innerHTML = "x estimada: " + Rgraph.x + "m";
+                        Rgraph.y = [R[0][1]];
+                        yf[0].innerHTML = "y estimada: " + Rgraph.y + "m";
+                        Rgraph.z = [R[0][2]];
+                        zf[0].innerHTML = "z estimada: " + Rgraph.z + "m";
+                        Plotly.react('graph', [Egraph,Rgraph]);
+                }
+            }
+            setTimeout(refresco, 1000);
+        }
+        refresco();
+    </script>
+ 
+</body>
+ 
+</html>
