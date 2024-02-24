@@ -47,13 +47,13 @@
 			eventSource.addEventListener('event1', function (event) {
 				console.log('Evento 1 recibido:', event.data);
 				const ADC0 = document.getElementById('ADC0');
-				ADC0.innerText = currentEvent.data;
+				ADC0.innerText = event.data;
 			});
 
 			eventSource.addEventListener('event2', function (event) {
 				console.log('Evento 2 recibido:', event.data);
 				const vtg = document.getElementById('voltaje');
-				vtg.innerText = currentEvent.data;
+				vtg.innerText = event.data;
 			});
 		</script>
 	</body>
