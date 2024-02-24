@@ -21,19 +21,14 @@
         var ledStatus = toggleBtn.checked ? 'on' : 'off';
   
         var xhr = new XMLHttpRequest();
-        var url = 'https://tu-servidor.com/endpoint'; // Reemplaza con tu URL de servidor
-  
-        xhr.open('POST', url, true);
+        xhr.open('POST','/', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
-  
+        xhr.send('led=' + ledStatus); 
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4 && xhr.status === 200) {
             console.log('Datos enviados correctamente');
           }
         };
-  
-        var data = 'led=' + ledStatus;
-        xhr.send(data);
       }
     </script>
     <script>
