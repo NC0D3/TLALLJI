@@ -1,60 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>TLALLJI</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
-    <script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
-</head>
- 
-<body>
-    <h1>Toggle Button Control</h1>
-    <label>
-      <input id="toggleBtn" type="checkbox" onchange="sendData()">
-      <span id="ADC0"></span>
-        <span id="voltaje"></span>
-    </label>
-    <script>
-      function sendData() {
-        var toggleBtn = document.getElementById('toggleBtn');
-        var ledStatus = toggleBtn.checked ? 'on' : 'off';
-  
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST','/', true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
-        xhr.send('led=' + ledStatus); 
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            console.log('Datos enviados correctamente');
-          }
-        };
-      }
-    </script>
-    <script>
-      const eventSource = new EventSource('/sse');
-    
-      eventSource.onmessage = function (currentEvent) {
-        if (currentEvent.data.length > 0) {
-          const ADC0 = document.getElementById('ADC0');
-          ADC0.innerText = currentEvent.data;
-        }
-      };
+	<head>
+		<title>TLALLJI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+		<script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+		<script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
+	</head>
 
-        eventSource.addEventListener('event1', function(event) {
-          console.log('Evento 1 recibido:', event.data);
-          const ADC0 = document.getElementById('ADC0');
-          ADC0.innerText = currentEvent.data;
-        });
-        
-        eventSource.addEventListener('event2', function(event) {
-          console.log('Evento 2 recibido:', event.data);
-          const vtg = document.getElementById('voltaje');
-          vtg.innerText = currentEvent.data;
-        });
-    </script>
-    
-  </body>
- 
+	<body>
+		<h1>Toggle Button Control</h1>
+		<div class="container">
+			<input id="toggleBtn" type="checkbox" onchange="sendData()"/>
+			<label for="toggleBtn" id="lblLED">Toggle</label>
+			<span id="ADC0" class="DATAOUT">aaaa</span>
+			<span id="voltaje" class="DATAOUT">aaaaa</span>
+		</div>
+
+
+		<script>
+			function sendData() {
+				var toggleBtn = document.getElementById('toggleBtn');
+				var ledStatus = toggleBtn.checked ? 'ON' : 'OFF';
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', '/', true);
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
+				xhr.send('led=' + ledStatus);
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						console.log('Datos enviados correctamente');
+					}
+				};
+			}
+		</script>
+		<script>
+			const eventSource = new EventSource('/sse');
+
+			eventSource.onmessage = function (currentEvent) {
+				if (currentEvent.data.length > 0) {
+					const ADC0 = document.getElementById('ADC0');
+					ADC0.innerText = currentEvent.data;
+				}
+			};
+
+			eventSource.addEventListener('event1', function (event) {
+				console.log('Evento 1 recibido:', event.data);
+				const ADC0 = document.getElementById('ADC0');
+				ADC0.innerText = currentEvent.data;
+			});
+
+			eventSource.addEventListener('event2', function (event) {
+				console.log('Evento 2 recibido:', event.data);
+				const vtg = document.getElementById('voltaje');
+				vtg.innerText = currentEvent.data;
+			});
+		</script>
+	</body>
 </html>
