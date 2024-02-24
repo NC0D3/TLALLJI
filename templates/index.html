@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lokalization</title>
+    <title>TLALLJI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
-    
     <script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
-    
 </head>
  
 <body>
     <h1>Toggle Button Control</h1>
     <label>
       <input id="toggleBtn" type="checkbox" onchange="sendData()">
-      <span></span>
+      <span id="ADC0"></span>
     </label>
     <script>
       function sendData() {
@@ -26,7 +24,7 @@
         var url = 'https://tu-servidor.com/endpoint'; // Reemplaza con tu URL de servidor
   
         xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
   
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4 && xhr.status === 200) {
@@ -38,6 +36,18 @@
         xhr.send(data);
       }
     </script>
+    <script>
+      const eventSource = new EventSource('/sse');
+      const ADC0 = document.getElementById('ADC0');
+    
+      eventSource.onmessage = function (currentEvent) {
+        if (currentEvent.data.length > 0) {
+          const ADC0 = document.getElementById('ADC0');
+          ADC0.innerText = currentEvent.data;
+        }
+      };
+    </script>
+    
   </body>
  
 </html>
