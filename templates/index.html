@@ -14,6 +14,7 @@
     <label>
       <input id="toggleBtn" type="checkbox" onchange="sendData()">
       <span id="ADC0"></span>
+        <span id="voltaje"></span>
     </label>
     <script>
       function sendData() {
@@ -33,7 +34,6 @@
     </script>
     <script>
       const eventSource = new EventSource('/sse');
-      const ADC0 = document.getElementById('ADC0');
     
       eventSource.onmessage = function (currentEvent) {
         if (currentEvent.data.length > 0) {
@@ -41,6 +41,18 @@
           ADC0.innerText = currentEvent.data;
         }
       };
+
+        eventSource.addEventListener('event1', function(event) {
+          console.log('Evento 1 recibido:', event.data);
+          const ADC0 = document.getElementById('ADC0');
+          ADC0.innerText = currentEvent.data;
+        });
+        
+        eventSource.addEventListener('event2', function(event) {
+          console.log('Evento 2 recibido:', event.data);
+          const vtg = document.getElementById('voltaje');
+          vtg.innerText = currentEvent.data;
+        });
     </script>
     
   </body>
