@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lokalization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+    
+    <script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
+    
+</head>
+ 
+<body>
+    <h1>Toggle Button Control</h1>
+    <label>
+      <input id="toggleBtn" type="checkbox" onchange="sendData()">
+      <span></span>
+    </label>
+    <script>
+      function sendData() {
+        var toggleBtn = document.getElementById('toggleBtn');
+        var ledStatus = toggleBtn.checked ? 'on' : 'off';
+  
+        var xhr = new XMLHttpRequest();
+        var url = 'https://tu-servidor.com/endpoint'; // Reemplaza con tu URL de servidor
+  
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log('Datos enviados correctamente');
+          }
+        };
+  
+        var data = 'led=' + ledStatus;
+        xhr.send(data);
+      }
+    </script>
+  </body>
+ 
+</html>
