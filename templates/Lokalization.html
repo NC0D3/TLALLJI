@@ -1,11 +1,14 @@
-sudo apt-get update
+try:
+        # Ejecutar la aplicación Flask
+        app.run(debug=True)
+    except KeyboardInterrupt:
+        # Capturar la excepción si se presiona Ctrl+C y detener el hilo
+        manejar_ctrl_c(signal.SIGINT, None)
 
-sudo apt-get install build-essential python-dev python-smbus git
-
-cd ~
-
-git clone https://github.com/adafruit/Adafruit_Python_ADS1x15.git
-
-cd Adafruit_Python_ADS1x15
-
-sudo python setup.py install
+# Manejador para la señal SIGINT (Ctrl+C)
+def manejar_ctrl_c(sig, frame):
+    global hilo_ads
+    print("\nDeteniendo el hilo...")
+    hilo_ads.join()  # Esperar a que el hilo termine antes de salir
+    print("Hilo detenido. Saliendo.")
+    sys.exit(0)
