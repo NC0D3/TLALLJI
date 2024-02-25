@@ -53,9 +53,16 @@
 		const umbralSlider = document.getElementById('sldrHumedad');
 		document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
 		let umbral = umbralSlider.value;
+		// Variables de control
+		let enviadoOn = false;
+		let enviadoOff = false;
+
 		umbralSlider.addEventListener('input', () => {
 			umbral = umbralSlider.value;
 			document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
+			// Restablecer las variables de control al mover el slider
+			enviadoOn = false;
+			enviadoOff = false;
 		});
 
 		const eventSource = new EventSource('/sse');
@@ -66,10 +73,15 @@
 			let valorMaximo = 5500;
 			let porcentaje = ((valor - valorMinimo) / (valorMaximo - valorMinimo)) * 100;
 			// Enviar XMLHttpRequest cuando se cumple una condición
-			if (porcentaje < umbral) {
+			if (porcentaje < umbral && !enviadoOn) {
 				enviarMensaje('bomba=ON');
-			} else if (porcentaje >= porcentaje/2+50) {
+				enviadoOn = true;
+				enviadoOff = false;
+			} else if (porcentaje >= (umbral / 2 + 50) && !enviadoOff) {
 				enviarMensaje('bomba=OFF');
+				// Restablecer las variables de control al mover el slider
+				enviadoOn = false;
+				enviadoOff = true;
 			}
 			var slider = document.getElementById('sldrHumedad');
 			slider.style.background = 'linear-gradient(to right, var(--main-color-active-text) 0%, var(--main-color-active-text) ' + porcentaje + '%, grey ' + porcentaje + '%, grey 100%)';
