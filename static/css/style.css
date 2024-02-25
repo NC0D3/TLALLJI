@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
 /*configuracion base*/
 :root {
     --main-bkg: #e7e8e8;
@@ -28,60 +29,72 @@ body {
     flex-direction: column;
 }
 
-h1{
+h1 {
     text-align: center;
     color: var(--main-color);
 }
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     text-align: center;
-    align-items: center ;
+    align-items: center;
 }
 
-#toggleBtn{
+#toggleBtn {
     height: 0;
-	width: 0;
-	visibility: hidden;
+    width: 0;
+    visibility: hidden;
 }
 
-#lblLED{
-	cursor: pointer;
-	text-indent: -9999px;
-	width: 200px;
-	height: 100px;
-	background: grey;
-	display: block;
-	border-radius: 100px;
-	position: relative;
+#lblLED {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 200px;
+    height: 100px;
+    background: grey;
+    display: block;
+    border-radius: 100px;
+    position: relative;
 }
 
 #lblLED:after {
-	content: '';
-	position: absolute;
-	top: 5px;
-	left: 5px;
-	width: 90px;
-	height: 90px;
-	background: #fff;
-	border-radius: 90px;
-	transition: 0.3s;
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 90px;
+    height: 90px;
+    background: #fff;
+    border-radius: 90px;
+    transition: 0.3s;
 }
 
-#toggleBtn:checked + label {
-	background: var(--main-color-active-text);
+#toggleBtn:checked+label {
+    background: var(--main-color-active-text);
 }
 
-#toggleBtn:checked + label:after {
-	left: calc(100% - 5px);
-	transform: translateX(-100%);
+#toggleBtn:checked+label:after {
+    left: calc(100% - 5px);
+    transform: translateX(-100%);
 }
 
 #lblLED:active:after {
-	width: 130px;
+    width: 130px;
 }
 
-.DATAOUT{
+.DATAOUT {
     color: var(--main-color);
+}
+
+.slider-container {
+    text-align: center;
+}
+
+.slider {
+    width: 80%;
+}
+
+#humidityValue {
+    margin-top: 20px;
 }
