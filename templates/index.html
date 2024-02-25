@@ -51,6 +51,7 @@
 			var slider = document.getElementById('mySlider');
 			slider.style.background = 'linear-gradient(to right, #4CAF50 0%, #4CAF50 ' + receivedHumidity + '%, #f0f0f0 ' + receivedHumidity + '%, #f0f0f0 100%)';
 			console.log('Evento humedad recibido:', event.data);
+			document.getElementById('voltaje').textContent = 'voltaje: '+receivedHumidity;
 			// Aquí puedes manejar los datos del evento1 como desees
 		});
 		const listElement = document.getElementById('ADC0');
