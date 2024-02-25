@@ -54,14 +54,7 @@
 			document.getElementById('voltaje').textContent = 'voltaje: '+receivedHumidity;
 			// Aquí puedes manejar los datos del evento1 como desees
 		});
-		const listElement = document.getElementById('ADC0');
 
-		eventSource.onmessage = function (currentEvent) {
-			if (currentEvent.data.length > 0) {
-				const listElement = document.getElementById('ADC0');
-				listElement.innerText = currentEvent.data;
-			}
-		};
 	</script>
 
 </body>
