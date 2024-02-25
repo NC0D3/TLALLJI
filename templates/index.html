@@ -15,14 +15,12 @@
 	<h1>TLALLJI</h1>
 	<h2>Control autonomo</h2>
 	<div class="container">
+		<span>switch LED</span>
 		<input id="toggleBtn" type="checkbox" onchange="ToggleLED()" />
 		<label for="toggleBtn" id="lblLED">Toggle</label>
-		<span id="ADC0" class="DATAOUT">aaaa</span>
+		<span id="lblHumedad" class="DATAOUT">aaaa</span>
+		<input type="range" value="25" id="sldrHumedad">
 		<span id="voltaje" class="DATAOUT">aaaaa</span>
-	</div>
-	<div class="slider-container">
-		<input type="range" min="0" max="100" value="50" class="slider" id="mySlider">
-		<p id="humidityValue">Valor de humedad: <span id="humiditySpan">0</span></p>
 	</div>
 
 
@@ -47,14 +45,15 @@
 		eventSource.addEventListener('humedad', function (event) {
 			// Actualiza el valor en el span y establece el fondo del slider
 			var receivedHumidity = event.data;
-			document.getElementById('humiditySpan').textContent = receivedHumidity;
-			var slider = document.getElementById('mySlider');
-			slider.style.background = 'linear-gradient(to right, #4CAF50 0%, #4CAF50 ' + receivedHumidity + '%, #f0f0f0 ' + receivedHumidity + '%, #f0f0f0 100%)';
+			let valorMinimo = 26100;
+			let valorMaximo = 5500;
+			let porcentaje = ((valor - valorMinimo) / (valorMaximo - valorMinimo)) * 100;
+			var slider = document.getElementById('sldrHumedad');
+			slider.style.background = 'background: linear-gradient(to right, var(--main-color-active-text) 0%, var(--main-color-active-text) '+porcentaje+'%, grey '+porcentaje+'%, grey 100%)';
 			console.log('Evento humedad recibido:', event.data);
 			document.getElementById('voltaje').textContent = 'voltaje: '+receivedHumidity;
 			// Aquí puedes manejar los datos del evento1 como desees
 		});
-
 	</script>
 
 </body>
