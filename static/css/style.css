@@ -27,6 +27,7 @@ body {
     position: absolute;
     display: flex;
     flex-direction: column;
+    color: var(--main-color-active-text);
 }
 
 h1 {
@@ -87,14 +88,24 @@ h1 {
     color: var(--main-color);
 }
 
-.slider-container {
-    text-align: center;
+
+input[type="range"] { 
+    margin: auto;
+    padding: 2px;
+    appearance: none;
+    position: relative;
+    overflow: hidden;
+    height: 40px;
+    width: 90%;
+    cursor: pointer;
+    background: grey;
+    border-radius: 22px;
+}
+::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 40px; /* 1 */
+    height: 40px;
+    background: #ffffff;
+    border-radius: 20px;
 }
 
-.slider {
-    width: 80%;
-}
-
-#humidityValue {
-    margin-top: 20px;
-}
