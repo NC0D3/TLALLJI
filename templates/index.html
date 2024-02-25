@@ -18,9 +18,9 @@
 		<span>switch LED</span>
 		<input id="toggleBtn" type="checkbox" onchange="ToggleLED()" />
 		<label for="toggleBtn" id="lblLED">Toggle</label>
-		<span id="lblHumedad" class="DATAOUT">aaaa</span>
+		<span id="lblHumedad" class="DATAOUT"></span>
 		<input type="range" value="25" id="sldrHumedad">
-		<span id="voltaje" class="DATAOUT">aaaaa</span>
+		<span id="lblUmbral" class="DATAOUT"></span>
 	</div>
 
 
@@ -41,17 +41,39 @@
 	</script>
 
 	<script>
+		// Función para enviar XMLHttpRequest
+		const enviarMensaje = (mensaje) => {
+			const xmlhttp = new XMLHttpRequest();
+			// Configura la solicitud según tus necesidades
+			xmlhttp.open('POST', '/', true);
+			xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xmlhttp.send('${mensaje}');
+		};
+		// Obtener referencia al slider y elementos de la interfaz
+		const umbralSlider = document.getElementById('sldrHumedad');
+		document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
+		let umbral = umbralSlider.value;
+		umbralSlider.addEventListener('input', () => {
+			umbral = umbralSlider.value;
+			document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
+		});
+
 		const eventSource = new EventSource('/sse');
 		eventSource.addEventListener('humedad', function (event) {
 			// Actualiza el valor en el span y establece el fondo del slider
-			var receivedHumidity = event.data;
+			var valor = event.data;
 			let valorMinimo = 26100;
 			let valorMaximo = 5500;
 			let porcentaje = ((valor - valorMinimo) / (valorMaximo - valorMinimo)) * 100;
+			// Enviar XMLHttpRequest cuando se cumple una condición
+			if (porcentaje < umbral) {
+				enviarMensaje('bomba=ON');
+			} else if (porcentaje >= porcentaje/2+50) {
+				enviarMensaje('bomba=OFF');
+			}
 			var slider = document.getElementById('sldrHumedad');
-			slider.style.background = 'background: linear-gradient(to right, var(--main-color-active-text) 0%, var(--main-color-active-text) '+porcentaje+'%, grey '+porcentaje+'%, grey 100%)';
-			console.log('Evento humedad recibido:', event.data);
-			document.getElementById('voltaje').textContent = 'voltaje: '+receivedHumidity;
+			slider.style.background = 'linear-gradient(to right, var(--main-color-active-text) 0%, var(--main-color-active-text) ' + porcentaje + '%, grey ' + porcentaje + '%, grey 100%)';
+			document.getElementById('lblHumedad').textContent = 'humedad: ' + porcentaje + '%';
 			// Aquí puedes manejar los datos del evento1 como desees
 		});
 	</script>
