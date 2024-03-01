@@ -4,6 +4,7 @@
 <head>
 	<title>TLALLJI</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="/static/media/LOGO.ico" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 	<link rel="stylesheet" href="../static/css/style.css">
@@ -11,17 +12,74 @@
 	<script src="{{ url_for('static', filename='js/javascript.js') }}"></script>
 </head>
 
-<body>
-	<h1>TLALLJI</h1>
-	<h2>Control autonomo</h2>
-	<div class="container">
-		<span>switch LED</span>
-		<input id="toggleBtn" type="checkbox" onchange="ToggleLED()" />
-		<label for="toggleBtn" id="lblLED">Toggle</label>
-		<span id="lblHumedad" class="DATAOUT"></span>
-		<input type="range" value="25" id="sldrHumedad">
-		<span id="lblUmbral" class="DATAOUT"></span>
+<body onload="">
+	<div class="Title">
+		<img src="/static/media/LOGO.svg" alt="Logotipo">
+		<h1>TLALLJI</h1>
 	</div>
+	<div class="main-container">
+		<div class="param1">
+			<h2 id="lblContenedor">Porcentaje de agua : 50%</h2>
+			<h2 id="lblPlanta">Presencia de planta : SI</h2>
+		</div>
+		<div class="sub-container">
+			<div class="param2">
+				<h2>Parámetros</h2>
+				<div>
+					<span>Humedad: </span>
+					<span id="lblHumedad" class="DATAOUT">50%</span>
+				</div>
+				<div>
+					<span>Iluminación: </span>
+					<span id="lblIluminacion" class="DATAOUT">50%</span>
+				</div>
+				<div>
+					<span>Calidad del aire: </span>
+					<span id="lblAire" class="DATAOUT">50ppm</span>
+				</div>
+			</div>
+			<div class="control">
+				<div class="selector">
+					<h2 id="lblModo">Control manual</h2>
+					<input type="checkbox" id="swtchModo" class="switch little" onchange="Modo()" />
+					<label for="swtchModo">Toggle</label>
+				</div>
+				<div class="container module" id="modoManual">
+					<h2>Bomba de agua</h2>
+					<input type="checkbox" id="switch2" onchange="ToggleLED()" class="switch" />
+					<label for="switch2">Toggle</label>
+				</div>
+				<div class="container module" id="modoAutonomo">
+					<span>Umbrales de humedad</span>
+					<div class="ctrl">
+						<input type="range" min="0" max="100" value="50" id="sldrHumedad1" class="slider">
+						<h2 id="lblUmbral1" class="DATAOUT"></h2>
+					</div>
+					<div class="ctrl">
+						<input type="range" min="0" max="100" value="50" id="sldrHumedad2" class="slider">
+						<h2 id="lblUmbral2" class="DATAOUT"></h2>
+					</div>
+					<span>Encendido</span>
+					<div class="ctrl">
+						<input type="checkbox" id="swtchAutonomo" class="switch little"
+							onchange="EncendidoAutonomo()" />
+						<label for="swtchAutonomo">Toggle</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<script>
+		var EnableSystem = false;
+		/*verificacion de agua y planta*/
+		const IniParamsSource = new EventSource('/ParamsIni');
+		IniParamsSource.onmessage = function (event) {
+			EnableSystem=event.data=="TRUE"?true:false;
+			
+		};
+	</script>
 
 
 	<script>
@@ -41,6 +99,47 @@
 	</script>
 
 	<script>
+		let EstadoAutonomo = false;
+		function EncendidoAutonomo() {
+			// Obtener el checkbox y el párrafo
+			var checkbox = document.getElementById("swtchAutonomo");
+			var sldrHumedad1 = document.getElementById("sldrHumedad1");
+			var sldrHumedad2 = document.getElementById("sldrHumedad2");
+			// Cambiar el valor del párrafo según el estado del checkbox
+			if (checkbox.checked) {
+				EstadoAutonomo = true;
+				sldrHumedad1.disabled = true;
+				sldrHumedad2.disabled = true;
+			} else {
+				EstadoAutonomo = false;
+				sldrHumedad1.disabled = false;
+				sldrHumedad2.disabled = false;
+			}
+
+
+		}
+
+		function Modo() {
+			// Obtener el checkbox y el párrafo
+			var checkbox = document.getElementById("swtchModo");
+			var valorEtiqueta = document.getElementById("lblModo");
+			// Cambiar el valor del párrafo según el estado del checkbox
+			if (checkbox.checked) {
+				valorEtiqueta.innerText = "Control Autonomo";
+				document.getElementById("modoManual").style.display = "none";
+				document.getElementById("modoAutonomo").style.display = "flex";
+			} else {
+				valorEtiqueta.innerText = "Control Manual";
+				document.getElementById("modoAutonomo").style.display = "none";
+				document.getElementById("modoManual").style.display = "flex";
+			}
+
+
+		}
+	</script>
+
+	<script>
+
 		// Función para enviar XMLHttpRequest
 		const enviarMensaje = (mensaje) => {
 			const xmlhttp = new XMLHttpRequest();
@@ -49,17 +148,31 @@
 			xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xmlhttp.send(mensaje);
 		};
-		// Obtener referencia al slider y elementos de la interfaz
-		const umbralSlider = document.getElementById('sldrHumedad');
-		document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
-		let umbral = umbralSlider.value;
+
 		// Variables de control
 		let enviadoOn = false;
 		let enviadoOff = false;
+		// Obtener referencia al slider y elementos de la interfaz
+		const umbralSlider1 = document.getElementById('sldrHumedad1');
+		document.getElementById('lblUmbral1').innerText = umbralSlider1.value + '%';
+		let umbral1 = umbralSlider1.value;
 
-		umbralSlider.addEventListener('input', () => {
-			umbral = umbralSlider.value;
-			document.getElementById('lblUmbral').innerText = umbralSlider.value + '%';
+		umbralSlider1.addEventListener('input', () => {
+			umbral1 = umbralSlider1.value;
+			document.getElementById('lblUmbral1').innerText = umbralSlider1.value + '%';
+			// Restablecer las variables de control al mover el slider
+			enviadoOn = false;
+			enviadoOff = false;
+		});
+
+		// Obtener referencia al slider y elementos de la interfaz
+		const umbralSlider2 = document.getElementById('sldrHumedad2');
+		document.getElementById('lblUmbral2').innerText = umbralSlider2.value + '%';
+		let umbral2 = umbralSlider2.value;
+
+		umbralSlider2.addEventListener('input', () => {
+			umbral2 = umbralSlider1.value;
+			document.getElementById('lblUmbral2').innerText = umbralSlider2.value + '%';
 			// Restablecer las variables de control al mover el slider
 			enviadoOn = false;
 			enviadoOff = false;
