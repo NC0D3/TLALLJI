@@ -185,19 +185,18 @@
 			let valorMaximo = 5500;
 			let porcentaje = ((valor - valorMinimo) / (valorMaximo - valorMinimo)) * 100;
 			// Enviar XMLHttpRequest cuando se cumple una condición
-			if (porcentaje < umbral && !enviadoOn) {
+			if (porcentaje < umbral1 && !enviadoOn) {
 				enviarMensaje('bomba=ON');
 				enviadoOn = true;
 				enviadoOff = false;
-			} else if (porcentaje >= (umbral / 2 + 50) && !enviadoOff) {
+			} else if (porcentaje >= umbral2 && !enviadoOff) {
 				enviarMensaje('bomba=OFF');
 				// Restablecer las variables de control al mover el slider
 				enviadoOn = false;
 				enviadoOff = true;
 			}
 			var slider = document.getElementById('sldrHumedad');
-			slider.style.background = 'linear-gradient(to right, var(--main-color-active-text) 0%, var(--main-color-active-text) ' + porcentaje + '%, grey ' + porcentaje + '%, grey 100%)';
-			document.getElementById('lblHumedad').textContent = 'humedad: ' + porcentaje + '%';
+			document.getElementById('lblHumedad').textContent =porcentaje + '%';
 			// Aquí puedes manejar los datos del evento1 como desees
 		});
 	</script>
