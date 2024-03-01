@@ -1,9 +1,13 @@
-def escribir(nombre_archivo, *lineas):
-    # Abre el archivo en modo escritura ('w')
-    with open(nombre_archivo, 'w') as archivo:
-        # Escribe cada línea en el archivo
-        for linea in lineas:
-            archivo.write(linea + '\n')  # Agrega un salto de línea después de cada línea
+def leer_archivo(nombre_archivo):
+    # Verificar si el archivo existe
+    if not os.path.exists(nombre_archivo):
+        print(f"El archivo '{nombre_archivo}' no existe.")
+        return None
 
-# Ejemplo de uso
-escribir('mi_archivo.txt', 'Hola', 'Esta es otra línea', 'Tercera línea')
+    # Leer las líneas del archivo y guardarlas en un arreglo
+    with open(nombre_archivo, 'r') as archivo:
+        lineas = archivo.readlines()
+        # Eliminar el carácter de nueva línea al final de cada línea
+        lineas = [linea.strip() for linea in lineas]
+
+    return lineas
