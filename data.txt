@@ -1,5 +1,9 @@
-2d
-[[0,0,1],[7.507,0,0],[0,3.94,0],[7.507,3.94,0],]
-[3.514738764907931,1.5921983132706043,0]
-0
+def escribir(nombre_archivo, *lineas):
+    # Abre el archivo en modo escritura ('w')
+    with open(nombre_archivo, 'w') as archivo:
+        # Escribe cada línea en el archivo
+        for linea in lineas:
+            archivo.write(linea + '\n')  # Agrega un salto de línea después de cada línea
 
+# Ejemplo de uso
+escribir('mi_archivo.txt', 'Hola', 'Esta es otra línea', 'Tercera línea')
