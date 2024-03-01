@@ -1,13 +1,9 @@
-def leer_archivo(nombre_archivo):
-    # Verificar si el archivo existe
-    if not os.path.exists(nombre_archivo):
-        print(f"El archivo '{nombre_archivo}' no existe.")
-        return None
+.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Procesar la respuesta cuando la solicitud esté completa
+          var respuesta = this.responseText;
+          console.log('Respuesta del servidor:', respuesta);
 
-    # Leer las líneas del archivo y guardarlas en un arreglo
-    with open(nombre_archivo, 'r') as archivo:
-        lineas = archivo.readlines()
-        # Eliminar el carácter de nueva línea al final de cada línea
-        lineas = [linea.strip() for linea in lineas]
-
-    return lineas
+          // Aquí puedes realizar el procesamiento adicional de la respuesta
+        }
+      };
