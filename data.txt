@@ -1,11 +1,10 @@
-def escribir_en_linea(archivo, numero_linea, cadena):
-    # Leer todas las líneas del archivo
-    with open(archivo, 'r') as file:
-        lineas = file.readlines()
+def bot_send_text(bot_message):   
+    bot_token = '6619455855:AAEOBEAXVmZsHwGweBZQrOxm8t1Armp5EJQ'
+    bot_chatID = '1250803165'
+    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+    response = requests.get(send_text)
+    return response
 
-    # Reemplazar la línea especificada con la nueva cadena
-    lineas[numero_linea - 1] = cadena + '\n'
+bot_send_text('Tienes menos del 20% de agua!!!')
 
-    # Escribir las líneas actualizadas de vuelta al archivo
-    with open(archivo, 'w') as file:
-        file.writelines(lineas)
+
