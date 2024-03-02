@@ -1,9 +1,11 @@
-.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          // Procesar la respuesta cuando la solicitud esté completa
-          var respuesta = this.responseText;
-          console.log('Respuesta del servidor:', respuesta);
+def escribir_en_linea(archivo, numero_linea, cadena):
+    # Leer todas las líneas del archivo
+    with open(archivo, 'r') as file:
+        lineas = file.readlines()
 
-          // Aquí puedes realizar el procesamiento adicional de la respuesta
-        }
-      };
+    # Reemplazar la línea especificada con la nueva cadena
+    lineas[numero_linea - 1] = cadena + '\n'
+
+    # Escribir las líneas actualizadas de vuelta al archivo
+    with open(archivo, 'w') as file:
+        file.writelines(lineas)
